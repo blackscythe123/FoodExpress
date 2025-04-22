@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+
+{% block title %}Restaurants - FoodExpress{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <h1 class="mb-4">Explore Restaurants</h1>
+    
+    <!-- Filters -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form id="filter-form" class="row g-3 align-items-end">
+                <div class="col-md-4">
+                    <label for="cuisine-filter" class="form-label">Cuisine</label>
+                    <select id="cuisine-filter" name="cuisine" class="form-select">
+                        <option value="">All Cuisines</option>
+                        {% for cuisine in cuisine_types %}
+                        <option value="{{ cuisine }}" {% if selected_cuisine == cuisine %}selected{% endif %}>{{ cuisine }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="rating-filter" class="form-label">Min Rating</label>
+                    <select id="rating-filter" name="rating" class="form-select">
+                        <option value="">Any Rating</option>
+                        <option value="4.5" {% if selected_rating == '4.5' %}selected{% endif %}>4.5+</option>
+                        <option value="4" {% if selected_rating == '4' %}selected{% endif %}>4.0+</option>
+                        <option value="3.5" {% if selected_rating == '3.5' %}selected{% endif %}>3.5+</option>
+                        <option value="3" {% if selected_rating == '3' %}selected{% endif %}>3.0+</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="search-filter" class="form-label">Search</label>
+                    <input type="text" id="search-filter" name="search" class="form-control" placeholder="Restaurant name..." value="{{ search_query or '' }}">
+                </div>
+                <div class="col-md-2 d-flex">
+                    <button type="submit" class="btn btn-primary me-2 flex-grow-1">Filter</button>
+                    <button type="button" id="clear-filters" class="btn btn-outline-secondary">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Restaurant Listings -->
+    <div class="row">
+        {% if restaurants %}
+            {% for restaurant in restaurants %}
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card restaurant-card h-100">
+                    <img src="{{ restaurant.image_url }}" class="card-img-top" alt="{{ restaurant.name }}">
+                    <div class="badge bg-primary">{{ restaurant.cuisine_type }}</div>
+                    <div class="card-body">
+                        <h5 class="card-title">{{ restaurant.name }}</h5>
+                        <div class="mb-2">
+                            <div class="rating-stars">
+                                {% for i in range(5) %}
+                                    {% if i < restaurant.rating|int %}
+                                    <i class="fas fa-star"></i>
+                                    {% elif i < restaurant.rating %}
+                                    <i class="fas fa-star-half-alt"></i>
+                                    {% else %}
+                                    <i class="far fa-star"></i>
+                                    {% endif %}
+                                {% endfor %}
+                                <small class="text-muted ms-1">{{ restaurant.rating }}</small>
+                            </div>
+                        </div>
+                        <p class="card-text mb-3">{{ restaurant.description|truncate(100) }}</p>
+                        <div class="d-flex align-items-center mb-3">
+                            <i class="fas fa-map-marker-alt text-primary me-2"></i>
+                            <small>{{ restaurant.address|truncate(30) }}</small>
+                        </div>
+                        <a href="{{ url_for('restaurant_detail', restaurant_id=restaurant.id) }}" class="btn btn-primary w-100">View Menu</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="col-12 text-center py-5">
+                <i class="fas fa-utensils fa-3x text-muted mb-3"></i>
+                <h4>No restaurants found</h4>
+                <p class="text-muted">Try adjusting your filters or search criteria.</p>
+                <a href="{{ url_for('restaurants') }}" class="btn btn-primary mt-3">Clear All Filters</a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

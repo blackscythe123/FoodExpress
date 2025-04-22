@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+
+{% block title %}Order Confirmation - FoodExpress{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="card mb-4">
+        <div class="card-body text-center py-5">
+            <i class="fas fa-check-circle fa-5x text-success mb-4"></i>
+            <h2 class="mb-3">Thank You for Your Order!</h2>
+            <p class="lead">Your order has been confirmed and is being processed.</p>
+            <div class="mt-4">
+                <p><strong>Order ID:</strong> #{{ order.id }}</p>
+                <p><strong>Order Date:</strong> {{ order.created_at.strftime('%Y-%m-%d %H:%M') }}</p>
+                <p>
+                    <strong>Status:</strong> 
+                    <span class="badge status-{{ order.status }}">{{ order.status|capitalize }}</span>
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Order Details</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Item</th>
+                                    <th class="text-center">Quantity</th>
+                                    <th class="text-end">Price</th>
+                                    <th class="text-end">Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in order_items %}
+                                <tr>
+                                    <td>{{ item.name }}</td>
+                                    <td class="text-center">{{ item.quantity }}</td>
+                                    <td class="text-end">${{ item.price|round(2) }}</td>
+                                    <td class="text-end">${{ item.subtotal|round(2) }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="3" class="text-end"><strong>Subtotal:</strong></td>
+                                    <td class="text-end">${{ order.total_amount|round(2) }}</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3" class="text-end"><strong>Delivery Fee:</strong></td>
+                                    <td class="text-end">$2.99</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3" class="text-end"><strong>Total:</strong></td>
+                                    <td class="text-end">${{ (order.total_amount + 2.99)|round(2) }}</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Delivery Information</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Delivery Address:</strong></p>
+                    <p>{{ order.delivery_address }}</p>
+                    
+                    {% if order.delivery_notes %}
+                    <p><strong>Delivery Notes:</strong></p>
+                    <p>{{ order.delivery_notes }}</p>
+                    {% endif %}
+                    
+                    <hr>
+                    
+                    <p><strong>Estimated Delivery Time:</strong></p>
+                    <p>30-45 minutes</p>
+                </div>
+            </div>
+            
+            <div class="d-grid gap-3">
+                <a href="{{ url_for('profile') }}" class="btn btn-outline-primary">
+                    <i class="fas fa-user me-2"></i>View Order History
+                </a>
+                <a href="{{ url_for('restaurants') }}" class="btn btn-primary">
+                    <i class="fas fa-utensils me-2"></i>Order More Food
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

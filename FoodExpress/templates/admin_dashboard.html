@@ -1,0 +1,272 @@
+{% extends 'base.html' %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="container-fluid my-5">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <h1>Admin Dashboard</h1>
+            <p class="text-muted">System overview and management</p>
+        </div>
+    </div>
+    
+    <!-- Stats Summary Cards -->
+    <div class="row mb-5">
+        <div class="col-md-3 mb-3">
+            <div class="card bg-primary text-white h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Total Users</h5>
+                    <h2 class="display-4">{{ total_users }}</h2>
+                    <p class="card-text">Registered accounts</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card bg-success text-white h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Total Restaurants</h5>
+                    <h2 class="display-4">{{ total_restaurants }}</h2>
+                    <p class="card-text">Active restaurants</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card bg-info text-white h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Total Orders</h5>
+                    <h2 class="display-4">{{ total_orders }}</h2>
+                    <p class="card-text">Completed orders</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card bg-warning text-dark h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Total Revenue</h5>
+                    <h2 class="display-4">${{ "%.2f"|format(total_revenue) }}</h2>
+                    <p class="card-text">Platform earnings</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Analytics Charts -->
+    <div class="row mb-5">
+        <div class="col-md-8 mb-4">
+            <div class="card shadow">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">System Performance</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="systemChart" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card shadow">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">User Distribution</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="userPieChart" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Data Tables -->
+    <div class="row">
+        <div class="col-md-12 mb-5">
+            <div class="card shadow">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">User Management</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Username</th>
+                                    <th>Email</th>
+                                    <th>Role</th>
+                                    <th>Created</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for user in users %}
+                                <tr>
+                                    <td>{{ user.id }}</td>
+                                    <td>{{ user.username }}</td>
+                                    <td>{{ user.email }}</td>
+                                    <td>
+                                        <span class="badge {% if user.role == 'admin' %}bg-danger{% elif user.role == 'owner' %}bg-warning text-dark{% else %}bg-primary{% endif %}">
+                                            {{ user.role }}
+                                        </span>
+                                    </td>
+                                    <td>{{ user.created_at.strftime('%Y-%m-%d') }}</td>
+                                    <td>
+                                        <a href="{{ url_for('admin_edit_user', user_id=user.id) }}" class="btn btn-sm btn-outline-primary">Edit</a>
+                                        <button class="btn btn-sm btn-outline-danger" onclick="confirmDeleteUser('{{ user.id }}', '{{ user.username }}')">Delete</button>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-12">
+            <div class="card shadow">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Restaurant Management</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Cuisine</th>
+                                    <th>Owner</th>
+                                    <th>Rating</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for restaurant in restaurants %}
+                                <tr>
+                                    <td>{{ restaurant.id }}</td>
+                                    <td>{{ restaurant.name }}</td>
+                                    <td>{{ restaurant.cuisine_type }}</td>
+                                    <td>
+                                        {% if restaurant.owner %}
+                                            {{ restaurant.owner.username }}
+                                        {% else %}
+                                            <span class="text-muted">None</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ "%.1f"|format(restaurant.rating) }} ⭐</td>
+                                    <td>
+                                        <a href="{{ url_for('restaurant_detail', restaurant_id=restaurant.id) }}" class="btn btn-sm btn-outline-primary">View</a>
+                                        <a href="{{ url_for('admin_edit_restaurant', restaurant_id=restaurant.id) }}" class="btn btn-sm btn-outline-secondary">Edit</a>
+                                        <button class="btn btn-sm btn-outline-danger" onclick="confirmDeleteRestaurant('{{ restaurant.id }}', '{{ restaurant.name }}')">Delete</button>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // System Performance Chart
+    const systemCtx = document.getElementById('systemChart').getContext('2d');
+    const systemChart = new Chart(systemCtx, {
+        type: 'line',
+        data: {
+            labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+            datasets: [{
+                label: 'Orders',
+                data: [65, 59, 80, 81, 56, 55, 40],
+                borderColor: 'rgba(54, 162, 235, 1)',
+                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                tension: 0.1
+            }, {
+                label: 'Revenue',
+                data: [28, 48, 40, 19, 86, 27, 90],
+                borderColor: 'rgba(255, 206, 86, 1)',
+                backgroundColor: 'rgba(255, 206, 86, 0.2)',
+                tension: 0.1
+            }, {
+                label: 'New Users',
+                data: [12, 19, 3, 5, 2, 3, 7],
+                borderColor: 'rgba(75, 192, 192, 1)',
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+
+    // User Distribution Pie Chart
+    const userPieCtx = document.getElementById('userPieChart').getContext('2d');
+    const userPieChart = new Chart(userPieCtx, {
+        type: 'pie',
+        data: {
+            labels: ['Customers', 'Restaurant Owners', 'Admins'],
+            datasets: [{
+                data: [
+                    {{ users|selectattr('role', 'equalto', 'customer')|list|length }}, 
+                    {{ users|selectattr('role', 'equalto', 'owner')|list|length }}, 
+                    {{ users|selectattr('role', 'equalto', 'admin')|list|length }}
+                ],
+                backgroundColor: [
+                    'rgba(54, 162, 235, 0.8)',
+                    'rgba(255, 206, 86, 0.8)',
+                    'rgba(255, 99, 132, 0.8)'
+                ],
+                borderColor: [
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(255, 99, 132, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+    
+    // Function to confirm user deletion
+    function confirmDeleteUser(userId, username) {
+        if (confirm(`Are you sure you want to delete user "${username}"? This will also delete all associated restaurants and orders. This action cannot be undone.`)) {
+            // Create and submit a form
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = `/admin/user/delete/${userId}`;
+            document.body.appendChild(form);
+            form.submit();
+        }
+    }
+    
+    // Function to confirm restaurant deletion
+    function confirmDeleteRestaurant(restaurantId, restaurantName) {
+        if (confirm(`Are you sure you want to delete restaurant "${restaurantName}"? This will also delete all associated menu items. This action cannot be undone.`)) {
+            // Create and submit a form
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = `/admin/restaurant/delete/${restaurantId}`;
+            document.body.appendChild(form);
+            form.submit();
+        }
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage Menu - {{ restaurant.name }}{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Manage Menu: {{ restaurant.name }}</h1>
+        <a href="{{ url_for('add_menu_item', restaurant_id=restaurant.id) }}" class="btn btn-success">
+            <i class="fas fa-plus-circle"></i> Add New Menu Item
+        </a>
+    </div>
+    
+    <div class="card shadow mb-4">
+        <div class="card-header">
+            <div class="d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Menu Items</h5>
+                
+                {% if categories %}
+                <div class="dropdown">
+                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="categoryFilter" data-bs-toggle="dropdown" aria-expanded="false">
+                        Filter by Category
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="categoryFilter">
+                        <li><a class="dropdown-item" href="{{ url_for('manage_menu', restaurant_id=restaurant.id) }}">All Categories</a></li>
+                        {% for category in categories %}
+                        <li><a class="dropdown-item" href="{{ url_for('manage_menu', restaurant_id=restaurant.id, category=category) }}">{{ category }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="card-body">
+            {% if menu_items %}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Category</th>
+                            <th>Price</th>
+                            <th>Dietary</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in menu_items %}
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    {% if item.image_url %}
+                                    <img src="{{ item.image_url }}" class="rounded me-2" style="width: 40px; height: 40px; object-fit: cover;" alt="{{ item.name }}">
+                                    {% else %}
+                                    <div class="bg-light rounded me-2 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                        <i class="fas fa-utensils text-muted"></i>
+                                    </div>
+                                    {% endif %}
+                                    <div>
+                                        <h6 class="mb-0">{{ item.name }}</h6>
+                                        <small class="text-muted">{{ item.description[:50] }}{% if item.description|length > 50 %}...{% endif %}</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>{{ item.category }}</td>
+                            <td>${{ "%.2f"|format(item.price) }}</td>
+                            <td>
+                                {% if item.is_vegetarian %}<span class="badge bg-success me-1">Vegetarian</span>{% endif %}
+                                {% if item.is_vegan %}<span class="badge bg-info me-1">Vegan</span>{% endif %}
+                                {% if item.is_gluten_free %}<span class="badge bg-warning text-dark">Gluten-Free</span>{% endif %}
+                            </td>
+                            <td>
+                                <a href="{{ url_for('edit_menu_item', item_id=item.id) }}" class="btn btn-sm btn-outline-secondary">Edit</a>
+                                <button class="btn btn-sm btn-outline-danger" onclick="confirmDeleteItem('{{ item.id }}', '{{ item.name }}')">Delete</button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="alert alert-info">
+                <p class="mb-0">No menu items found. Click "Add New Menu Item" to get started.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <div class="d-flex justify-content-between mt-4">
+        <a href="{{ url_for('owner_dashboard') }}" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left"></i> Back to Dashboard
+        </a>
+        <a href="{{ url_for('restaurant_detail', restaurant_id=restaurant.id) }}" class="btn btn-outline-primary">
+            <i class="fas fa-eye"></i> View Public Page
+        </a>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function confirmDeleteItem(itemId, itemName) {
+        if (confirm(`Are you sure you want to delete "${itemName}" from your menu? This action cannot be undone.`)) {
+            // Create and submit a form
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = `/owner/menu_item/delete/${itemId}`;
+            document.body.appendChild(form);
+            form.submit();
+        }
+    }
+</script>
+{% endblock %}

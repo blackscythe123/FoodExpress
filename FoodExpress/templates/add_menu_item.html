@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block title %}Add Menu Item - {{ restaurant.name }}{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Add Menu Item for {{ restaurant.name }}</h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('add_menu_item', restaurant_id=restaurant.id) }}">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Item Name</label>
+                            <input type="text" class="form-control" id="name" name="name" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea class="form-control" id="description" name="description" rows="2"></textarea>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="price" class="form-label">Price ($)</label>
+                            <input type="number" class="form-control" id="price" name="price" step="0.01" min="0" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="category" class="form-label">Category</label>
+                            <input type="text" class="form-control" id="category" name="category" required
+                                   placeholder="e.g., Appetizers, Main Course, Desserts, Beverages">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="image_url" class="form-label">Image URL</label>
+                            <input type="url" class="form-control" id="image_url" name="image_url">
+                            <div class="form-text">Enter a valid URL for your menu item image.</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <h5>Dietary Options</h5>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="is_vegetarian" name="is_vegetarian">
+                                <label class="form-check-label" for="is_vegetarian">Vegetarian</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="is_vegan" name="is_vegan">
+                                <label class="form-check-label" for="is_vegan">Vegan</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="is_gluten_free" name="is_gluten_free">
+                                <label class="form-check-label" for="is_gluten_free">Gluten-Free</label>
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">Add Menu Item</button>
+                            <a href="{{ url_for('manage_menu', restaurant_id=restaurant.id) }}" class="btn btn-outline-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+
+{% block title %}Login - FoodExpress{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Login to Your Account</h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('login') }}">
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email address</label>
+                            <input type="email" class="form-control" id="email" name="email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="password" name="password" required>
+                        </div>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="remember" name="remember">
+                            <label class="form-check-label" for="remember">Remember me</label>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">Login</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer text-center">
+                    <p class="mb-0">Don't have an account? <a href="{{ url_for('register') }}">Register here</a></p>
+                </div>
+            </div>
+            
+            <!-- Demo account information for testing purposes -->
+            <div class="card mt-3">
+                <div class="card-body">
+                    <h5 class="card-title">Demo Accounts</h5>
+                    <p class="card-text">For testing, you can use the following credentials or quick login buttons:</p>
+                    
+                    <!-- Quick Login Buttons -->
+                    <div class="d-grid gap-2 mb-3">
+                        <button onclick="loginAs('demo@example.com', 'password')" class="btn btn-outline-primary">Log in as Customer</button>
+                        <button onclick="loginAs('owner@example.com', 'owner123')" class="btn btn-outline-success">Log in as Restaurant Owner</button>
+                        <button onclick="loginAs('admin@example.com', 'admin123')" class="btn btn-outline-danger">Log in as Admin</button>
+                    </div>
+                    
+                    <hr>
+                    
+                    <!-- Account Details -->
+                    <h6 class="mt-3">Account Details:</h6>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">
+                            <strong>Customer:</strong><br>
+                            Email: demo@example.com<br>
+                            Password: password
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Restaurant Owner:</strong><br>
+                            Email: owner@example.com<br>
+                            Password: owner123
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Admin:</strong><br>
+                            Email: admin@example.com<br>
+                            Password: admin123
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function loginAs(email, password) {
+        document.getElementById('email').value = email;
+        document.getElementById('password').value = password;
+        document.querySelector('form').submit();
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,243 @@
+{% extends 'base.html' %}
+
+{% block title %}FoodExpress - Online Food Delivery{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8 text-center">
+                <h1 class="display-4 fw-bold mb-4">Food Delivery Made Simple</h1>
+                <p class="lead mb-4">Discover the best food from your favorite local restaurants and enjoy it at home.</p>
+                <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+                    <a href="{{ url_for('restaurants') }}" class="btn btn-primary btn-lg px-4 gap-3">
+                        Browse Restaurants
+                    </a>
+                    {% if not current_user.is_authenticated %}
+                    <a href="{{ url_for('register') }}" class="btn btn-outline-light btn-lg px-4">
+                        Sign Up
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Restaurants -->
+<section class="container my-5">
+    <h2 class="text-center mb-4">Featured Restaurants</h2>
+    <div class="row">
+        {% for restaurant in featured_restaurants %}
+        <div class="col-md-6 col-lg-3 mb-4">
+            <div class="card restaurant-card">
+                <img src="{{ restaurant.image_url }}" class="card-img-top" alt="{{ restaurant.name }}">
+                <div class="badge bg-primary">{{ restaurant.cuisine_type }}</div>
+                <div class="card-body">
+                    <h5 class="card-title">{{ restaurant.name }}</h5>
+                    <div class="mb-2">
+                        <div class="rating-stars">
+                            {% for i in range(5) %}
+                                {% if i < restaurant.rating|int %}
+                                <i class="fas fa-star"></i>
+                                {% elif i < restaurant.rating %}
+                                <i class="fas fa-star-half-alt"></i>
+                                {% else %}
+                                <i class="far fa-star"></i>
+                                {% endif %}
+                            {% endfor %}
+                            <small class="text-muted ms-1">{{ restaurant.rating }}</small>
+                        </div>
+                    </div>
+                    <p class="card-text text-truncate">{{ restaurant.description }}</p>
+                    <a href="{{ url_for('restaurant_detail', restaurant_id=restaurant.id) }}" class="btn btn-primary w-100">View Menu</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <div class="text-center mt-4">
+        <a href="{{ url_for('restaurants') }}" class="btn btn-outline-primary">View All Restaurants</a>
+    </div>
+</section>
+
+<!-- How It Works -->
+<section class="bg-dark py-5">
+    <div class="container">
+        <h2 class="text-center mb-5">How It Works</h2>
+        <div class="row g-4">
+            <div class="col-md-3">
+                <div class="process-step animate-on-scroll">
+                    <i class="fas fa-store"></i>
+                    <h4>Choose Restaurant</h4>
+                    <p>Browse from our selection of local restaurants.</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="process-step animate-on-scroll">
+                    <i class="fas fa-utensils"></i>
+                    <h4>Select Your Food</h4>
+                    <p>Choose from hundreds of delicious meals.</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="process-step animate-on-scroll">
+                    <i class="fas fa-credit-card"></i>
+                    <h4>Checkout</h4>
+                    <p>Fast and secure checkout process.</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="process-step animate-on-scroll">
+                    <i class="fas fa-truck"></i>
+                    <h4>Fast Delivery</h4>
+                    <p>Get your food delivered to your doorstep.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Food Categories -->
+<section class="container my-5">
+    <h2 class="text-center mb-4">Explore Food Categories</h2>
+    <div class="row g-4">
+        <div class="col-6 col-md-4 col-lg-2">
+            <div class="card h-100 text-center">
+                <div class="card-body">
+                    <i class="fas fa-pizza-slice fa-3x mb-3 text-primary"></i>
+                    <h5 class="card-title">Pizza</h5>
+                </div>
+                <a href="{{ url_for('restaurants') }}" class="stretched-link"></a>
+            </div>
+        </div>
+        <div class="col-6 col-md-4 col-lg-2">
+            <div class="card h-100 text-center">
+                <div class="card-body">
+                    <i class="fas fa-hamburger fa-3x mb-3 text-primary"></i>
+                    <h5 class="card-title">Burgers</h5>
+                </div>
+                <a href="{{ url_for('restaurants') }}" class="stretched-link"></a>
+            </div>
+        </div>
+        <div class="col-6 col-md-4 col-lg-2">
+            <div class="card h-100 text-center">
+                <div class="card-body">
+                    <i class="fas fa-fish fa-3x mb-3 text-primary"></i>
+                    <h5 class="card-title">Sushi</h5>
+                </div>
+                <a href="{{ url_for('restaurants') }}" class="stretched-link"></a>
+            </div>
+        </div>
+        <div class="col-6 col-md-4 col-lg-2">
+            <div class="card h-100 text-center">
+                <div class="card-body">
+                    <i class="fas fa-drumstick-bite fa-3x mb-3 text-primary"></i>
+                    <h5 class="card-title">Chicken</h5>
+                </div>
+                <a href="{{ url_for('restaurants') }}" class="stretched-link"></a>
+            </div>
+        </div>
+        <div class="col-6 col-md-4 col-lg-2">
+            <div class="card h-100 text-center">
+                <div class="card-body">
+                    <i class="fas fa-seedling fa-3x mb-3 text-primary"></i>
+                    <h5 class="card-title">Vegan</h5>
+                </div>
+                <a href="{{ url_for('restaurants') }}" class="stretched-link"></a>
+            </div>
+        </div>
+        <div class="col-6 col-md-4 col-lg-2">
+            <div class="card h-100 text-center">
+                <div class="card-body">
+                    <i class="fas fa-ice-cream fa-3x mb-3 text-primary"></i>
+                    <h5 class="card-title">Desserts</h5>
+                </div>
+                <a href="{{ url_for('restaurants') }}" class="stretched-link"></a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Delivery Process -->
+<section class="bg-dark py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6 mb-4 mb-lg-0">
+                <h2 class="mb-4">Fresh Food Straight To Your Door</h2>
+                <p class="lead">We partner with the best local restaurants to bring you fresh, delicious food delivered fast and hot.</p>
+                <div class="mt-4">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="bg-primary rounded-circle p-2 me-3">
+                            <i class="fas fa-check text-white"></i>
+                        </div>
+                        <span>Order from your favorite restaurants</span>
+                    </div>
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="bg-primary rounded-circle p-2 me-3">
+                            <i class="fas fa-check text-white"></i>
+                        </div>
+                        <span>Real-time order tracking</span>
+                    </div>
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="bg-primary rounded-circle p-2 me-3">
+                            <i class="fas fa-check text-white"></i>
+                        </div>
+                        <span>30-minute delivery guarantee</span>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <div class="bg-primary rounded-circle p-2 me-3">
+                            <i class="fas fa-check text-white"></i>
+                        </div>
+                        <span>Free delivery on your first order</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="row g-3">
+                    <div class="col-6">
+                        <img src="https://images.unsplash.com/photo-1473093295043-cdd812d0e601" class="img-fluid rounded" alt="Food delivery">
+                    </div>
+                    <div class="col-6">
+                        <img src="https://images.unsplash.com/photo-1454944338482-a69bb95894af" class="img-fluid rounded" alt="Restaurant food">
+                    </div>
+                    <div class="col-6">
+                        <img src="https://images.unsplash.com/photo-1498837167922-ddd27525d352" class="img-fluid rounded" alt="Food packaging">
+                    </div>
+                    <div class="col-6">
+                        <img src="https://images.unsplash.com/photo-1464454709131-ffd692591ee5" class="img-fluid rounded" alt="Food delivery person">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Download App Section -->
+<section class="container my-5">
+    <div class="row align-items-center">
+        <div class="col-md-6 order-md-2 mb-4 mb-md-0">
+            <h2>Get The FoodExpress App</h2>
+            <p class="lead">Download the app for even faster ordering and exclusive mobile deals!</p>
+            <ul class="list-unstyled">
+                <li class="mb-2"><i class="fas fa-check-circle text-primary me-2"></i> Faster checkout with saved addresses</li>
+                <li class="mb-2"><i class="fas fa-check-circle text-primary me-2"></i> Real-time order tracking</li>
+                <li class="mb-2"><i class="fas fa-check-circle text-primary me-2"></i> Exclusive mobile-only offers</li>
+                <li class="mb-2"><i class="fas fa-check-circle text-primary me-2"></i> Reorder your favorites with just a tap</li>
+            </ul>
+            <div class="mt-4">
+                <a href="#" class="btn btn-primary me-2 mb-2">
+                    <i class="fab fa-apple me-2"></i>App Store
+                </a>
+                <a href="#" class="btn btn-primary mb-2">
+                    <i class="fab fa-google-play me-2"></i>Google Play
+                </a>
+            </div>
+        </div>
+        <div class="col-md-6 order-md-1 text-center">
+            <i class="fas fa-mobile-alt fa-10x text-primary"></i>
+        </div>
+    </div>
+</section>
+{% endblock %}

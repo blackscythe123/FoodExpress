@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ restaurant.name }} - FoodExpress{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <!-- Restaurant Header -->
+    <div class="card mb-4">
+        <div class="row g-0">
+            <div class="col-md-4">
+                <img src="{{ restaurant.image_url }}" class="img-fluid rounded-start h-100" style="object-fit: cover;" alt="{{ restaurant.name }}">
+            </div>
+            <div class="col-md-8">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <h1 class="card-title">{{ restaurant.name }}</h1>
+                        <span class="badge bg-primary">{{ restaurant.cuisine_type }}</span>
+                    </div>
+                    <div class="rating-stars mb-2">
+                        {% for i in range(5) %}
+                            {% if i < restaurant.rating|int %}
+                            <i class="fas fa-star"></i>
+                            {% elif i < restaurant.rating %}
+                            <i class="fas fa-star-half-alt"></i>
+                            {% else %}
+                            <i class="far fa-star"></i>
+                            {% endif %}
+                        {% endfor %}
+                        <span class="ms-1">{{ restaurant.rating }} / 5</span>
+                    </div>
+                    <p class="card-text">{{ restaurant.description }}</p>
+                    <div class="restaurant-info mt-4">
+                        <div class="mb-2">
+                            <i class="fas fa-map-marker-alt text-primary me-2"></i> {{ restaurant.address }}
+                        </div>
+                        <div class="mb-2">
+                            <i class="fas fa-phone text-primary me-2"></i> {{ restaurant.phone }}
+                        </div>
+                        <div>
+                            <i class="fas fa-envelope text-primary me-2"></i> {{ restaurant.email }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Menu Filters -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <select class="form-select" id="category-filter" data-restaurant-id="{{ restaurant.id }}">
+                <option value="all">All Categories</option>
+                {% for category in categories %}
+                <option value="{{ category }}">{{ category }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-6">
+            <div class="input-group">
+                <span class="input-group-text"><i class="fas fa-search"></i></span>
+                <input type="text" class="form-control" id="menu-search" placeholder="Search menu items...">
+            </div>
+        </div>
+    </div>
+    
+    <!-- Menu Items -->
+    <div class="row" id="menu-items-container" data-restaurant-id="{{ restaurant.id }}">
+        <!-- Menu items will be loaded here via JavaScript -->
+        <div class="col-12 text-center py-5">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-3">Loading menu items...</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
